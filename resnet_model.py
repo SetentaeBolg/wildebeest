@@ -14,6 +14,7 @@ from keras.utils import plot_model
 from keras.models import *
 from keras.applications.imagenet_utils import _obtain_input_shape
 import keras.backend as K
+from keras.utils.np_utils import to_categorical
 import tensorflow as tf
 
 from keras.utils.data_utils import get_file
@@ -421,7 +422,7 @@ def transfer_FCN_ResNet50():
         for layer in flattened_layers:
             if layer.name:
                 index[layer.name]=layer
-        resnet50 = ResNet50(weights=None, classes=1)
+        resnet50 = ResNet50(weights=None, classes=2)
         resnet50 = train_resnet50(resnet50)
         for layer in resnet50.layers:
             weights = layer.get_weights()
@@ -471,12 +472,12 @@ def train_resnet50(model):
     shuffle_index = np.random.permutation(X2.shape[0])
     X3 = X2[shuffle_index]
     y3 = y2[shuffle_index]
-    (X_train, y_train), (X_test, y_test) = (X3[:8000], y3[:8000]), \
-    (X3[8000:], y3[8000:])
+    y3 = to_categorical(y3)
+    (X_train, y_train), (X_test, y_test) = (X3[:8000], y3[:8000]), (X3[8000:], y3[8000:])
     print('Train set size : ', X_train.shape[0])
     print('Test set size : ', X_test.shape[0])
 
-    model.compile(optimizer='SGD',loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer='adadelta',loss='categorical_crossentropy',metrics=['accuracy'])
     model.fit(X_train, y_train)
     return(model)
 
