@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
+from PIL import Image
 import os
 import sys
 from keras.models import Model
@@ -8,6 +9,8 @@ from keras.regularizers import l2
 from keras.layers import *
 from keras.engine import Layer
 from keras.applications.vgg16 import *
+from keras.applications.resnet50 import *
+from keras.utils import plot_model
 from keras.models import *
 from keras.applications.imagenet_utils import _obtain_input_shape
 import keras.backend as K
@@ -20,6 +23,7 @@ def get_weights_path_resnet():
     weights_path = get_file('resnet50_weights_tf_dim_ordering_tf_kernels.h5',TF_WEIGHTS_PATH,cache_subdir='models')
     return weights_path
 
+
 def conv_relu(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same', bias = True, w_decay = 0.01):
     def f(x):
         with tf.name_scope('conv_relu'):
@@ -29,6 +33,7 @@ def conv_relu(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same', b
         return x
     return f
 
+
 def conv_bn(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same', bias = True, w_decay = 0.01):
     def f(x):
         with tf.name_scope('conv_bn'):
@@ -37,6 +42,7 @@ def conv_bn(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same', bia
             x = BatchNormalization(mode=0, axis=-1)(x)
         return x
     return f
+
 
 def conv_bn_relu(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same', bias = True, w_decay = 0.01):
     def f(x):
@@ -48,6 +54,7 @@ def conv_bn_relu(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same'
         return x
     return f
 
+
 def bn_relu_conv(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same', bias = True, w_decay = 0.01):
     def f(x):
         with tf.name_scope('bn_relu_conv'):
@@ -58,6 +65,7 @@ def bn_relu_conv(nb_filter, nb_row, nb_col, subsample=(1, 1), border_mode='same'
         return x
     return f
 
+
 def atrous_conv_bn(nb_filter, nb_row, nb_col, atrous_rate=(2, 2), subsample=(1, 1), border_mode='same', bias = True, w_decay = 0.01):
     def f(x):
         with tf.name_scope('atrous_conv_bn'):
@@ -66,6 +74,7 @@ def atrous_conv_bn(nb_filter, nb_row, nb_col, atrous_rate=(2, 2), subsample=(1, 
             x = BatchNormalization(mode=0, axis=-1)(x)
         return x
     return f
+
 
 def atrous_conv_bn_relu(nb_filter, nb_row, nb_col, atrous_rate=(2, 2), subsample=(1, 1), border_mode='same', bias = True, w_decay = 0.01):
     def f(x):
@@ -76,6 +85,7 @@ def atrous_conv_bn_relu(nb_filter, nb_row, nb_col, atrous_rate=(2, 2), subsample
             x = Activation("relu")(x)
         return x
     return f
+
 
 # The original help functions from keras does not have weight regularizers, so I modified them.
 # Also, I changed these two functions into functional style
@@ -112,6 +122,7 @@ def identity_block(kernel_size, filters, stage, block, weight_decay=0., batch_mo
         x = Activation('relu')(x)
         return x
     return f
+
 
 def conv_block(kernel_size, filters, stage, block, weight_decay=0., strides=(2, 2), batch_momentum=0.99):
     '''conv_block is the block that has a conv layer at shortcut
@@ -154,6 +165,7 @@ def conv_block(kernel_size, filters, stage, block, weight_decay=0., strides=(2, 
         return x
     return f
 
+
 # Atrous-Convolution version of residual blocks
 def atrous_identity_block(kernel_size, filters, stage, block, weight_decay=0., atrous_rate=(2, 2), batch_momentum=0.99):
     '''The identity_block is the block that has no conv layer at shortcut
@@ -188,6 +200,7 @@ def atrous_identity_block(kernel_size, filters, stage, block, weight_decay=0., a
         x = Activation('relu')(x)
         return x
     return f
+
 
 def atrous_conv_block(kernel_size, filters, stage, block, weight_decay=0., strides=(1, 1), atrous_rate=(2, 2), batch_momentum=0.99):
     '''conv_block is the block that has a conv layer at shortcut
@@ -228,6 +241,7 @@ def atrous_conv_block(kernel_size, filters, stage, block, weight_decay=0., strid
         return x
     return f
 
+
 def resize_images_bilinear(X, height_factor=1, width_factor=1, target_height=None, target_width=None, data_format='default'):
     '''Resizes the images contained in a 4D tensor of shape
     - [batch, channels, height, width] (for 'channels_first' data_format)
@@ -267,6 +281,7 @@ def resize_images_bilinear(X, height_factor=1, width_factor=1, target_height=Non
         return X
     else:
         raise Exception('Invalid data_format: ' + data_format)
+
 
 class BilinearUpSampling2D(Layer):
     def __init__(self, size=(1, 1), target_size=None, data_format='default', **kwargs):
@@ -358,12 +373,13 @@ def AtrousFCN_Resnet50_16s(input_shape = None, weight_decay=0., batch_momentum=0
     x = BilinearUpSampling2D(target_size=tuple(image_size))(x)
 
     model = Model(img_input, x)
-    weights_path = os.path.expanduser('C:\\Users\\mc449n\\fcn_resnet50_weights_tf_dim_ordering_tf_kernels.h5')
+    weights_path = os.path.expanduser('C:\\Users\\mc449n\\models\\fcn_resnet50_weights_tf_dim_ordering_tf_kernels.h5')
     model.load_weights(weights_path, by_name=True)
     return model
 
+
 def transfer_FCN_ResNet50():
-    input_shape = (224, 224, 3)
+    input_shape = (64, 64, 3)
     img_input = Input(shape=input_shape)
     bn_axis = 3
 
@@ -405,19 +421,63 @@ def transfer_FCN_ResNet50():
         for layer in flattened_layers:
             if layer.name:
                 index[layer.name]=layer
-        resnet50 = ResNet50()
+        resnet50 = ResNet50(weights=None, classes=1)
+        resnet50 = train_resnet50(resnet50)
         for layer in resnet50.layers:
             weights = layer.get_weights()
             if layer.name=='fc1000':
                 weights[0] = np.reshape(weights[0], (1,1,2048,1000))
-            if index.has_key(layer.name):
+            if layer.name in index:
                 index[layer.name].set_weights(weights)
         model.save_weights(weights_path)
         print( 'Successfully transformed!')
     #else load weights
     else:
+        print(model.layers)
         model.load_weights(weights_path, by_name=True)
         print( 'Already transformed!')
 
-transfer_FCN_ResNet50()
 
+def train_resnet50(model):
+    X = []
+    y = []
+    np.random.seed(42)
+    for filename in os.listdir(r'wildebeest_images\yes'):
+        filename = "wildebeest_images\\yes\\" + filename
+        img = Image.open(filename)
+        img = img.resize([224,224])
+        arr = np.array(img)
+        X.append(arr)
+        y.append(1)
+
+    for filename in os.listdir(r'wildebeest_images\no'):
+        filename = "wildebeest_images\\no\\" + filename
+        img = Image.open(filename)
+        img = img.resize([224, 224])
+        arr = np.array(img)
+        X.append(arr)
+        y.append(0)
+
+    for filename in os.listdir(r'wildebeest_images\no_contrast'):
+        filename = "wildebeest_images\\no_contrast\\" + filename
+        img = Image.open(filename)
+        img = img.resize([224, 224])
+        arr = np.array(img)
+        X.append(arr)
+        y.append(0)
+
+    X2 = np.asarray(X)
+    y2 = np.asarray(y)
+    shuffle_index = np.random.permutation(X2.shape[0])
+    X3 = X2[shuffle_index]
+    y3 = y2[shuffle_index]
+    (X_train, y_train), (X_test, y_test) = (X3[:8000], y3[:8000]), \
+    (X3[8000:], y3[8000:])
+    print('Train set size : ', X_train.shape[0])
+    print('Test set size : ', X_test.shape[0])
+
+    model.compile(optimizer='SGD',loss='categorical_crossentropy',metrics=['accuracy'])
+    model.fit(X_train, y_train)
+    return(model)
+
+transfer_FCN_ResNet50()
