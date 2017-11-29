@@ -336,7 +336,7 @@ class BilinearUpSampling2D(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 
-def AtrousFCN_Resnet50_16s(input_shape = None, weight_decay=0., batch_momentum=0.9, batch_shape=None, classes=21):
+def AtrousFCN_Resnet50_16s(input_shape = None, weight_decay=0., batch_momentum=0.9, batch_shape=None, classes=2):
     if batch_shape:
         img_input = Input(batch_shape=batch_shape)
         image_size = batch_shape[1:3]
@@ -411,7 +411,7 @@ def transfer_FCN_ResNet50():
     x = identity_block(3, [512, 512, 2048], stage=5, block='b')(x)
     x = identity_block(3, [512, 512, 2048], stage=5, block='c')(x)
 
-    x = Conv2D(1000, (1, 1), activation='linear', name='fc1000')(x)
+    x = Conv2D(2, (1, 1), activation='linear', name='fc1000')(x)
 
     # Create model
     model = Model(img_input, x)
@@ -436,7 +436,6 @@ def transfer_FCN_ResNet50():
         print( 'Successfully transformed!')
     #else load weights
     else:
-        print(model.layers)
         model.load_weights(weights_path, by_name=True)
         print( 'Already transformed!')
 
@@ -480,7 +479,7 @@ def train_resnet50(model):
     print('Test set size : ', X_test.shape[0])
     earlyStopping = EarlyStopping(monitor='val_loss', patience=1, verbose=1, mode='auto')
     model.compile(optimizer='adadelta',loss='categorical_crossentropy',metrics=['accuracy'])
-    model.fit(X_train, y_train, nb_epoch=20, verbose=1, callbacks=[earlyStopping], validation_split=0.2, validation_data=None, shuffle=True)
+    model.fit(X_train, y_train, epochs=1, verbose=1, callbacks=[earlyStopping], validation_split=0.2, validation_data=None, shuffle=True)
     print("Detailed classification report:")
     print()
     y_true, y_pred = y_test, model.predict(X_test)
