@@ -17,6 +17,7 @@ import keras.backend as K
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import EarlyStopping
 import tensorflow as tf
+from sklearn.metrics import classification_report, confusion_matrix
 
 from keras.utils.data_utils import get_file
 
@@ -480,6 +481,10 @@ def train_resnet50(model):
     earlyStopping = EarlyStopping(monitor='val_loss', patience=1, verbose=1, mode='auto')
     model.compile(optimizer='adadelta',loss='categorical_crossentropy',metrics=['accuracy'])
     model.fit(X_train, y_train, nb_epoch=20, verbose=1, callbacks=[earlyStopping], validation_split=0.2, validation_data=None, shuffle=True)
+    print("Detailed classification report:")
+    print()
+    y_true, y_pred = y_test, clf.predict(X_test)
+    print(classification_report(y_true, y_pred))
     return(model)
 
 transfer_FCN_ResNet50()
