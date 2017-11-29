@@ -15,6 +15,7 @@ from keras.models import *
 from keras.applications.imagenet_utils import _obtain_input_shape
 import keras.backend as K
 from keras.utils.np_utils import to_categorical
+from keras.callbacks import EarlyStopping
 import tensorflow as tf
 
 from keras.utils.data_utils import get_file
@@ -427,7 +428,7 @@ def transfer_FCN_ResNet50():
         for layer in resnet50.layers:
             weights = layer.get_weights()
             if layer.name=='fc1000':
-                weights[0] = np.reshape(weights[0], (1,1,2048,1000))
+                weights[0] = np.reshape(weights[0], (1,1,2048,2))
             if layer.name in index:
                 index[layer.name].set_weights(weights)
         model.save_weights(weights_path)
@@ -476,9 +477,9 @@ def train_resnet50(model):
     (X_train, y_train), (X_test, y_test) = (X3[:8000], y3[:8000]), (X3[8000:], y3[8000:])
     print('Train set size : ', X_train.shape[0])
     print('Test set size : ', X_test.shape[0])
-
+    earlyStopping = EarlyStopping(monitor='val_loss', patience=1, verbose=1, mode='auto')
     model.compile(optimizer='adadelta',loss='categorical_crossentropy',metrics=['accuracy'])
-    model.fit(X_train, y_train)
+    model.fit(X_train, y_train, nb_epoch=20, verbose=1, callbacks=[earlyStopping], validation_split=0.2, validation_data=None, shuffle=True)
     return(model)
 
 transfer_FCN_ResNet50()
