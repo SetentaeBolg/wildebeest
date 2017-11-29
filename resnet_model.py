@@ -469,13 +469,13 @@ def train_resnet50(model):
         X.append(arr)
         y.append(0)
 
-    X2 = np.asarray(X)
-    y2 = np.asarray(y)
-    shuffle_index = np.random.permutation(X2.shape[0])
-    X3 = X2[shuffle_index]
-    y3 = y2[shuffle_index]
-    y3 = to_categorical(y3)
-    (X_train, y_train), (X_test, y_test) = (X3[:8000], y3[:8000]), (X3[8000:], y3[8000:])
+    X = np.asarray(X)
+    y = np.asarray(y)
+    shuffle_index = np.random.permutation(X.shape[0])
+    X = X[shuffle_index]
+    y = y[shuffle_index]
+    y = to_categorical(y)
+    (X_train, y_train), (X_test, y_test) = (X[:8000], y[:8000]), (X[8000:], y[8000:])
     print('Train set size : ', X_train.shape[0])
     print('Test set size : ', X_test.shape[0])
     earlyStopping = EarlyStopping(monitor='val_loss', patience=1, verbose=1, mode='auto')
@@ -483,7 +483,7 @@ def train_resnet50(model):
     model.fit(X_train, y_train, nb_epoch=20, verbose=1, callbacks=[earlyStopping], validation_split=0.2, validation_data=None, shuffle=True)
     print("Detailed classification report:")
     print()
-    y_true, y_pred = y_test, clf.predict(X_test)
+    y_true, y_pred = y_test, model.predict(X_test)
     print(classification_report(y_true, y_pred))
     return(model)
 
