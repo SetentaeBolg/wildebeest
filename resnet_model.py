@@ -382,7 +382,7 @@ def AtrousFCN_Resnet50_16s(input_shape = None, weight_decay=0., batch_momentum=0
 
 
 def transfer_FCN_ResNet50():
-    input_shape = (64, 64, 3)
+    input_shape = (224, 224, 3)
     img_input = Input(shape=input_shape)
     bn_axis = 3
 
@@ -479,11 +479,7 @@ def train_resnet50(model):
     print('Test set size : ', X_test.shape[0])
     earlyStopping = EarlyStopping(monitor='val_loss', patience=1, verbose=1, mode='auto')
     model.compile(optimizer='adadelta',loss='categorical_crossentropy',metrics=['accuracy'])
-    model.fit(X_train, y_train, epochs=1, verbose=1, callbacks=[earlyStopping], validation_split=0.2, validation_data=None, shuffle=True)
-    print("Detailed classification report:")
-    print()
-    y_true, y_pred = y_test, model.predict(X_test)
-    print(classification_report(y_true, y_pred))
+    model.fit(X_train, y_train, epochs=20, verbose=1, callbacks=[earlyStopping], validation_split=0.2, validation_data=None, shuffle=True)
     return(model)
 
 transfer_FCN_ResNet50()
