@@ -99,20 +99,16 @@ print('Test set size : ', X_test.shape[0])
 # In[8]:
 
 
-from keras.preprocessing.image import ImageDataGenerator
-
-datagen = ImageDataGenerator(zoom_range=0.2, vertical_flip=True,
-                             horizontal_flip=True)
 
 
-# train the model
-start = time.time()
-# Train the model
-model_info = model.fit_generator(datagen.flow(X_train, y_train, batch_size = 128),
-                                 steps_per_epoch = 512, nb_epoch = 200, 
-                                 validation_data = (X_test, y_test), verbose=1)
 end = time.time()
-model.save_weights('cifar_weights.h5')
+model.load_weights('cifar_weights.h5')
+result = model.predict(X_test)
+predicted_class = np.argmax(result, axis=1)
+true_class = np.argmax(y_test, axis=1)
+num_correct = np.sum(predicted_class == true_class) 
+accuracy = float(num_correct)/result.shape[0]
+print(accuracy * 100)
 
 
 # In[6]:
