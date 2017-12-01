@@ -12,12 +12,18 @@ from keras.objectives import *
 from keras.metrics import binary_accuracy
 from keras.models import load_model
 import keras.backend as K
+import tensorflow as tf
 #import keras.utils.visualize_util as vis_util
 
-from models import *
 from utils.loss_function import *
 from utils.metrics import *
 from utils.SegDataGenerator import *
+
+
+
+
+
+
 import time
 
 
@@ -167,67 +173,64 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
 
     model.save_weights(save_path+'/model.hdf5')
 
-if __name__ == '__main__':
-    model_name = 'AtrousFCN_Resnet50_16s'
-    #model_name = 'Atrous_DenseNet'
-    #model_name = 'DenseNet_FCN'
-    batch_size = 16
-    batchnorm_momentum = 0.95
-    epochs = 250
-    lr_base = 0.01 * (float(batch_size) / 16)
-    lr_power = 0.9
-    resume_training = False
-    if model_name is 'AtrousFCN_Resnet50_16s':
-        weight_decay = 0.0001/2
-    else:
-        weight_decay = 1e-4
-    target_size = (320, 320)
-    dataset = 'VOC2012_BERKELEY'
-    if dataset == 'VOC2012_BERKELEY':
-        # pascal voc + berkeley semantic contours annotations
-        train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
-        # train_file_path = os.path.expanduser('~/.keras/datasets/oneimage/train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
-        val_file_path   = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_val.txt')
-        data_dir        = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/JPEGImages')
-        label_dir       = os.path.expanduser('~/.keras/datasets/VOC2012/combined_annotations')
-        data_suffix='.jpg'
-        label_suffix='.png'
-        classes = 21
-    if dataset == 'COCO':
-        # ###################### loss function & metric ########################
-        train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
-        # train_file_path = os.path.expanduser('~/.keras/datasets/oneimage/train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
-        val_file_path   = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt')
-        data_dir        = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/JPEGImages')
-        label_dir       = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/SegmentationClass')
-        loss_fn = binary_crossentropy_with_logits
-        metrics = [binary_accuracy]
-        loss_shape = (target_size[0] * target_size[1] * classes,)
-        label_suffix = '.npy'
-        data_suffix='.jpg'
-        ignore_label = None
-        label_cval = 0
 
+model_name = 'CIFAR-10'
+batch_size = 16
+batchnorm_momentum = 0.95
+epochs = 250
+lr_base = 0.01 * (float(batch_size) / 16)
+lr_power = 0.9
+resume_training = False
+weight_decay = 1e-4
+target_size = (320, 320)
 
+train_file_path = 'C:\\Users\\mc449n\\Downloads\\2015'
+
+if dataset == 'VOC2012_BERKELEY':
+    # pascal voc + berkeley semantic contours annotations
+    train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
+    # train_file_path = os.path.expanduser('~/.keras/datasets/oneimage/train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
+    val_file_path   = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_val.txt')
+    data_dir        = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/JPEGImages')
+    label_dir       = os.path.expanduser('~/.keras/datasets/VOC2012/combined_annotations')
+    data_suffix='.jpg'
+    label_suffix='.png'
+    classes = 21
+if dataset == 'COCO':
     # ###################### loss function & metric ########################
-    if dataset == 'VOC2012' or dataset == 'VOC2012_BERKELEY':
-        loss_fn = softmax_sparse_crossentropy_ignoring_last_label
-        metrics = [sparse_accuracy_ignoring_last_label]
-        loss_shape = None
-        ignore_label = 255
-        label_cval = 255
+    train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
+    # train_file_path = os.path.expanduser('~/.keras/datasets/oneimage/train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
+    val_file_path   = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt')
+    data_dir        = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/JPEGImages')
+    label_dir       = os.path.expanduser('~/.keras/datasets/VOC2012/VOCdevkit/VOC2012/SegmentationClass')
+    loss_fn = binary_crossentropy_with_logits
+    metrics = [binary_accuracy]
+    loss_shape = (target_size[0] * target_size[1] * classes,)
+    label_suffix = '.npy'
+    data_suffix='.jpg'
+    ignore_label = None
+    label_cval = 0
 
-    # Class weight is not yet supported for 3+ dimensional targets
-    # class_weight = {i: 1 for i in range(classes)}
-    # # The background class is much more common than all
-    # # others, so give it less weight!
-    # class_weight[0] = 0.1
-    class_weight = None
 
-    config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
-    session = tf.Session(config=config)
-    K.set_session(session)
-    train(batch_size, epochs, lr_base, lr_power, weight_decay, classes, model_name, train_file_path, val_file_path,
-          data_dir, label_dir, target_size=target_size, batchnorm_momentum=batchnorm_momentum, resume_training=resume_training,
-          class_weight=class_weight, loss_fn=loss_fn, metrics=metrics, loss_shape=loss_shape, data_suffix=data_suffix,
-          label_suffix=label_suffix, ignore_label=ignore_label, label_cval=label_cval)
+# ###################### loss function & metric ########################
+if dataset == 'VOC2012' or dataset == 'VOC2012_BERKELEY':
+    loss_fn = softmax_sparse_crossentropy_ignoring_last_label
+    metrics = [sparse_accuracy_ignoring_last_label]
+    loss_shape = None
+    ignore_label = 255
+    label_cval = 255
+
+# Class weight is not yet supported for 3+ dimensional targets
+# class_weight = {i: 1 for i in range(classes)}
+# # The background class is much more common than all
+# # others, so give it less weight!
+# class_weight[0] = 0.1
+class_weight = None
+
+config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
+session = tf.Session(config=config)
+K.set_session(session)
+train(batch_size, epochs, lr_base, lr_power, weight_decay, classes, model_name, train_file_path, val_file_path,
+      data_dir, label_dir, target_size=target_size, batchnorm_momentum=batchnorm_momentum, resume_training=resume_training,
+      class_weight=class_weight, loss_fn=loss_fn, metrics=metrics, loss_shape=loss_shape, data_suffix=data_suffix,
+      label_suffix=label_suffix, ignore_label=ignore_label, label_cval=label_cval)
