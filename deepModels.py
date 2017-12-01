@@ -1,3 +1,4 @@
+from bilinearupsampling import BilinearUpSampling2D
 from keras.layers import Activation, Reshape, Dropout
 from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, Flatten, Dense
 from keras.models import Sequential, Model
@@ -7,7 +8,7 @@ from keras.layers import *
 
 num_classes=2
 # size of the region that will be classified
-im_sz=72
+im_sz = 72
 # size of final conv layer after 3 layes of max pooling
 fc1_sz=im_sz//2//2//2
 
