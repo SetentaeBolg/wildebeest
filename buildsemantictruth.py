@@ -1,4 +1,5 @@
 #not quite working yet, fine tuning required
+#much better now
 
 from PIL import Image
 import numpy as np
@@ -21,18 +22,19 @@ def dist(x1,y1,x2,y2):
 
 for name in image_names:
     truth = np.zeros((7360,4912), dtype=np.uint16)
+    
     count_rows = count_data.loc[count_data['SWC_image'] == name]
     for index, row in count_rows.iterrows():
         print(index)
         tilen_horiz = int(row['tile_id'][8]) - 1
         tilen_vert = int(row['tile_id'][10]) - 1
-        x_cent = int(row['xcoord'])+(tilen_horiz * int(4912/3))
+        x_cent = int(row['xcoord'])+(tilen_horiz * 1840)
         print(x_cent)
-        y_cent = 4912 - int(row['ycoord'])+int(tilen_horiz * 1840)
+        y_cent = int(row['ycoord'])+int(tilen_vert * int(4912/3))
         print(y_cent)
-        for x in range(max(x_cent - 31,0),min(x_cent + 31,4911)):
-            for y in range(max(y_cent - 31, 0),min(y_cent + 31, 7359)):
-                truth[y,x] = truth[y,x] + 1
+        for x in range(max(x_cent - 31,0),min(x_cent + 31,7359)):
+            for y in range(max(y_cent - 31, 0),min(y_cent + 31, 4911)):
+                truth[x,y] = truth[x,y] + 1
         print('row complete')
     newfilename = truth_image_folder + '\\' + name + '.png'
     scipy.misc.imsave(newfilename, truth.transpose())
