@@ -1,6 +1,3 @@
-#not quite working yet, fine tuning required
-#much better now
-
 from PIL import Image
 import numpy as np
 import pandas as pd
