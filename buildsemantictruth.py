@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 import scipy.misc
 
-raw_image_folder = r'C:\Users\mc449n\Downloads\2015'
-truth_image_folder = raw_image_folder + '\\truth'
+raw_image_folder = r'2015'
+truth_image_folder = raw_image_folder + '/truth'
 
 data_file_csv = 'swc_zooniverse_data_22Nov17.csv'
 count_data = pd.read_csv(data_file_csv)
@@ -34,7 +34,7 @@ for name in image_names:
             for y in range(max(y_cent - 31, 0),min(y_cent + 31, 4911)):
                 truth[x,y] = truth[x,y] + 1
         print('row complete')
-    newfilename = truth_image_folder + '\\' + name + '.png'
+    newfilename = truth_image_folder + '/' + name + '.png'
     scipy.misc.imsave(newfilename, truth.transpose())
 
     #convert the array down to 1 (wildebeest) and 0 (not wildebeest)
@@ -50,8 +50,6 @@ for name in image_names:
             newtruth[x*1840:((x+1)*1840),y*int(4912/3):((y+1)*int(4912/3))] = np.heaviside(newtruth[x*1840:((x+1)*1840),y*int(4912/3):((y+1)*int(4912/3))], 0)
 
     #save out image
-    newfilename = truth_image_folder + '\\' + name + '.png'
-    newnewfilename = truth_image_folder + '\\' + name + '_amended.png'
-    #scipy.misc.imsave(newfilename, truth.transpose())
+    newnewfilename = truth_image_folder + '/' + name + '_amended.png'
     scipy.misc.imsave(newnewfilename, newtruth.transpose())
     break
