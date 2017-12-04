@@ -3,10 +3,11 @@
 
 # In[1]:
 
-import time,os
+import time,os,sys
 from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2
 
 np.random.seed(2017)
 from keras.models import Sequential
@@ -16,65 +17,117 @@ from keras.layers.normalization import BatchNormalization
 from keras.utils import np_utils
 from keras.utils.np_utils import to_categorical
 
+from deepModels import getModel, getSegModel
 
 # In[2]:
 
 
+nx = 2000
+ny = 2000
 
-input_shape = (64, 64, 3)
+#input_shape = (64, 64, 3)
 
-fcnmodel = Sequential()
-fcnmodel.add(Conv2D(48, (3, 3), padding='same', activation='relu', input_shape=input_shape))
-fcnmodel.add(Conv2D(48, (3, 3), activation='relu', padding='same'))
-fcnmodel.add(MaxPooling2D(pool_size=(2, 2)))
-fcnmodel.add(Dropout(0.25))
-fcnmodel.add(Conv2D(96, (3, 3), activation='relu', padding='same'))
-fcnmodel.add(Conv2D(96, (3, 3), activation='relu', padding='same'))
-fcnmodel.add(MaxPooling2D(pool_size=(2, 2)))
-fcnmodel.add(Dropout(0.25))
-fcnmodel.add(Conv2D(192, (3, 3), activation='relu', padding='same'))
-fcnmodel.add(Conv2D(192, (3, 3), activation='relu', padding='same'))
-fcnmodel.add(MaxPooling2D(pool_size=(2, 2)))
-fcnmodel.add(Dropout(0.25))
-fcnmodel.add(Conv2D(512, (6, 6), activation='relu', name='fc1'))
-fcnmodel.add(Dropout(0.5))
-fcnmodel.add(Conv2D(256, (1, 1), activation='relu', padding='same', name='fc2'))
-fcnmodel.add(Dropout(0.5))
-fcnmodel.add(Conv2D(2, (1, 1), activation='softmax', name='predictions'))
-fcnmodel.add(Flatten())
+#fcnmodel = Sequential()
+#fcnmodel.add(Conv2D(48, (3, 3), padding='same', activation='relu', input_shape=input_shape))
+#fcnmodel.add(Conv2D(48, (3, 3), activation='relu', padding='same'))
+#fcnmodel.add(MaxPooling2D(pool_size=(2, 2)))
+#fcnmodel.add(Dropout(0.25))
+#fcnmodel.add(Conv2D(96, (3, 3), activation='relu', padding='same'))
+#fcnmodel.add(Conv2D(96, (3, 3), activation='relu', padding='same'))
+#fcnmodel.add(MaxPooling2D(pool_size=(2, 2)))
+#fcnmodel.add(Dropout(0.25))
+#fcnmodel.add(Conv2D(192, (3, 3), activation='relu', padding='same'))
+#fcnmodel.add(Conv2D(192, (3, 3), activation='relu', padding='same'))
+#fcnmodel.add(MaxPooling2D(pool_size=(2, 2)))
+#fcnmodel.add(Dropout(0.25))
+#fcnmodel.add(Conv2D(512, (6, 6), activation='relu', name='fc1'))
+#fcnmodel.add(Dropout(0.5))
+#fcnmodel.add(Conv2D(256, (1, 1), activation='relu', padding='same', name='fc2'))
+#fcnmodel.add(Dropout(0.5))
+#fcnmodel.add(Conv2D(2, (1, 1), activation='softmax', name='predictions'))
+#fcnmodel.add(Flatten())
 
+fcnmodel = getSegModel(ny,nx)
 
 
 num_classes=2
-model = Sequential()
-model.add(Convolution2D(48, 3, 3, border_mode='same', input_shape=input_shape))
-model.add(Activation('relu'))
-model.add(Convolution2D(48, 3, 3))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Convolution2D(96, 3, 3, border_mode='same'))
-model.add(Activation('relu'))
-model.add(Convolution2D(96, 3, 3))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Convolution2D(192, 3, 3, border_mode='same'))
-model.add(Activation('relu'))
-model.add(Convolution2D(192, 3, 3))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(512, name='fc1'))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-model.add(Dense(256, name='fc2'))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-model.add(Dense(num_classes, activation='softmax', name='predictions'))
+#model = Sequential()
+#model.add(Convolution2D(48, 3, 3, border_mode='same', input_shape=input_shape))
+#model.add(Activation('relu'))
+#model.add(Convolution2D(48, 3, 3))
+#model.add(Activation('relu'))
+#model.add(MaxPooling2D(pool_size=(2, 2)))
+#model.add(Dropout(0.25))
+#model.add(Convolution2D(96, 3, 3, border_mode='same'))
+#model.add(Activation('relu'))
+#model.add(Convolution2D(96, 3, 3))
+#model.add(Activation('relu'))
+#model.add(MaxPooling2D(pool_size=(2, 2)))
+#model.add(Dropout(0.25))
+#model.add(Convolution2D(192, 3, 3, border_mode='same'))
+#model.add(Activation('relu'))
+#model.add(Convolution2D(192, 3, 3))
+#model.add(Activation('relu'))
+#model.add(MaxPooling2D(pool_size=(2, 2)))
+#model.add(Dropout(0.25))
+#model.add(Flatten())
+#model.add(Dense(512, name='fc1'))
+#model.add(Activation('relu'))
+#model.add(Dropout(0.5))
+#model.add(Dense(256, name='fc2'))
+#model.add(Activation('relu'))
+#model.add(Dropout(0.5))
+#model.add(Dense(num_classes, activation='softmax', name='predictions'))
 # Compile the model
+model = getModel()
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+end = time.time()
+model.load_weights('cifar_weights.h5')
+
+flattened_layers = fcnmodel.layers
+index = {}
+for layer in flattened_layers:
+    if layer.name:
+        index[layer.name] = layer
+for layer in model.layers:
+    weights = layer.get_weights()
+    for i in range(len(weights)):
+        print(layer.name, ' ', i, ': ', weights[i].shape)
+    if layer.name in ['fc1','fc2','predictions']:
+        if layer.name == 'fc1':
+            weights[0] = np.reshape(weights[0],(9,9,192,512))
+        elif layer.name == 'fc2':
+            weights[0] = np.reshape(weights[0],(1,1,512,256))
+        else:
+            weights[0] = np.reshape(weights[0],(1,1,256,2))
+    if layer.name in index:
+        index[layer.name].set_weights(weights)
+
+for layer in fcnmodel.layers:
+    weights = layer.get_weights()
+    for i in range(len(weights)):
+        print(layer.name, ' ', i, ': ', weights[i].shape)
+
+fcnmodel.save_weights('fcn_cifar10_weights.h5')
+
+# test FCN on section of survey image
+X = []
+filename = "SWC1717.JPG"
+img = Image.open(filename)
+arr = np.array(img)
+X.append(arr[:nx,:ny,:])
+cv2.imwrite('input.png',X[0])
+
+X = np.asarray(X)
+X = X.astype('float32')/255
+
+result = fcnmodel.predict(X)[0]
+predicted_class = np.argmax(result, axis=2)
+outRGB = cv2.cvtColor(255*predicted_class.astype(np.uint8),cv2.COLOR_GRAY2BGR)
+        
+cv2.imwrite('test.png',outRGB)
+sys.exit('bye!')
 
 
 # In[3]:
@@ -122,35 +175,6 @@ print('Test set size : ', X_test.shape[0])
 
 
 
-
-end = time.time()
-model.load_weights('cifar_weights.h5')
-
-flattened_layers = fcnmodel.layers
-index = {}
-for layer in flattened_layers:
-    if layer.name:
-        index[layer.name] = layer
-for layer in model.layers:
-    weights = layer.get_weights()
-    for i in range(len(weights)):
-        print(layer.name, ' ', i, ': ', weights[i].shape)
-    if layer.name in ['fc1','fc2','predictions']:
-        if layer.name == 'fc1':
-            weights[0] = np.reshape(weights[0],(6,6,192,512))
-        elif layer.name == 'fc2':
-            weights[0] = np.reshape(weights[0],(1,1,512,256))
-        else:
-            weights[0] = np.reshape(weights[0],(1,1,256,2))
-    if layer.name in index:
-        index[layer.name].set_weights(weights)
-
-for layer in fcnmodel.layers:
-    weights = layer.get_weights()
-    for i in range(len(weights)):
-        print(layer.name, ' ', i, ': ', weights[i].shape)
-
-fcnmodel.save_weights('fcn_cifar10_weights.h5')
 
 result = model.predict(X_test)
 predicted_class = np.argmax(result, axis=1)
