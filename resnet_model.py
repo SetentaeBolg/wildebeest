@@ -444,24 +444,24 @@ def train_resnet50(model):
     X = []
     y = []
     np.random.seed(42)
-    for filename in os.listdir(r'wildebeest_images\yes'):
-        filename = "wildebeest_images\\yes\\" + filename
+    for filename in os.listdir(r'wildebeest_images/yes'):
+        filename = "wildebeest_images/yes/" + filename
         img = Image.open(filename)
         img = img.resize([224,224])
         arr = np.array(img)
         X.append(arr)
         y.append(1)
 
-    for filename in os.listdir(r'wildebeest_images\no'):
-        filename = "wildebeest_images\\no\\" + filename
+    for filename in os.listdir(r'wildebeest_images/no'):
+        filename = "wildebeest_images/no/" + filename
         img = Image.open(filename)
         img = img.resize([224, 224])
         arr = np.array(img)
         X.append(arr)
         y.append(0)
 
-    for filename in os.listdir(r'wildebeest_images\no_contrast'):
-        filename = "wildebeest_images\\no_contrast\\" + filename
+    for filename in os.listdir(r'wildebeest_images/no_contrast'):
+        filename = "wildebeest_images/no_contrast/" + filename
         img = Image.open(filename)
         img = img.resize([224, 224])
         arr = np.array(img)
