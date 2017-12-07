@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d4bcf09d-f62b-4376-ae61-27e2f88cf9c3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imagesplit.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buildsemantictruth.py" afterPath="$PROJECT_DIR$/buildsemantictruth.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/clusteringmarks.py" afterPath="$PROJECT_DIR$/clusteringmarks.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/swc_zooniverse_cluster_found_coords.csv" afterPath="$PROJECT_DIR$/swc_zooniverse_cluster_found_coords.csv" />
-    </list>
+    <list default="true" id="d4bcf09d-f62b-4376-ae61-27e2f88cf9c3" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -158,7 +152,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="210" />
     <option name="y" value="126" />
     <option name="width" value="1260" />
@@ -327,7 +321,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
+    <frame x="-8" y="-8" width="1696" height="1026" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
