@@ -3,7 +3,6 @@ from keras.layers import Activation, Reshape, Dropout
 from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, Flatten, Dense
 from keras.models import Sequential, Model
 from keras.layers import *
-#from utils.BilinearUpSampling import *
 
 
 num_classes=2
