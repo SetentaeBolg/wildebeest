@@ -1,130 +1,93 @@
-
-# coding: utf-8
-
-# In[1]:
-
+import pandas as pd
 import time,os
 from PIL import Image
-import matplotlib.pyplot as plt
 import numpy as np
-
-import sys
-np.random.seed(2017) 
-from keras.models import Sequential
-from keras.layers.convolutional import Convolution2D, MaxPooling2D, Conv2D
-from keras.layers import Activation, Flatten, Dense, Dropout
-from keras.layers.normalization import BatchNormalization
-from keras.utils import np_utils
 from keras.utils.np_utils import to_categorical
 from deepModels import getModel
+from keras.preprocessing.image import ImageDataGenerator
+from sklearn.utils import shuffle
 
+print('test')
+root_image_folder = '2015'
 
-# In[2]:
-
-#input_shape = (64, 64, 3)
-#
-#
-#num_classes=2
-#model = Sequential()
-#model.add(Conv2D(48, (3, 3), padding='same', input_shape=input_shape))
-#print('conv1: ', model.output_shape)
-#model.add(Activation('relu'))
-#model.add(Conv2D(48, (3, 3), padding='same'))
-#print('conv2: ', model.output_shape)
-#model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
-#print('pool1: ', model.output_shape)
-#model.add(Dropout(0.25))
-#model.add(Conv2D(96, (3, 3), padding='same'))
-#print('conv3: ', model.output_shape)
-#model.add(Activation('relu'))
-#model.add(Conv2D(96, (3, 3), padding='same'))
-#print('conv4: ', model.output_shape)
-#model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
-#print('pool2: ', model.output_shape)
-#model.add(Dropout(0.25))
-#model.add(Conv2D(192, (3, 3), padding='same'))
-#print('conv5: ', model.output_shape)
-#model.add(Activation('relu'))
-#model.add(Conv2D(192, (3, 3), padding='same'))
-#model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
-#print('pool3: ', model.output_shape[1])
-#model.add(Dropout(0.25))
-#model.add(Conv2D(512, (8, 8), activation='relu', name='fc1'))
-#print('dense 1: ', model.output_shape)
-#model.add(Dropout(0.5))
-#model.add(Conv2D(256, (1, 1), activation='relu', padding='same', name='fc2'))
-#model.add(Dropout(0.5))
-#model.add(Conv2D(num_classes, (1, 1), activation='softmax', name='predictions'))
-##print('pre flatten: ', model.output_shape)
-### remove this line for fcn
-#model.add(Flatten())
-##print('post flatten: ', model.output_shape)
-##model.add(Dense(256))
-#print('dense 2: ', model.output_shape)
-##model.add(Activation('relu'))
-##model.add(Dense(num_classes, activation='softmax'))
-#print('final: ', model.output_shape)
-## Compile the model
-#
 model = getModel()
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-#sys.exit('bye')
+train_images = pd.read_csv('train.txt', header=None)
+train_images.columns = ['SWC_image']
+test_images = pd.read_csv('test.txt', header=None)
+test_images.columns = ['SWC_image']
 
+w_train = pd.read_csv('swc_zooniverse_cluster_found_coords_xycorrected.csv')
+w_test = w_train[w_train['image_name'].isin(list(test_images.loc[:].values.flatten()))]
+w_train = w_train[w_train['image_name'].isin(list(train_images.loc[:].values.flatten()))]
 
+nw_train = pd.read_csv('isolated_non_wildebeest.csv')
+nw_test = nw_train[nw_train['image_name'].isin(list(test_images.loc[:].values.flatten()))]
+nw_train = nw_train[nw_train['image_name'].isin(list(train_images.loc[:].values.flatten()))]
 
-# In[3]:
+w_train = shuffle(w_train)
+w_train = w_train[:500]
+w_test = shuffle(w_test)
+w_test = w_test[:100]
+nw_train = shuffle(nw_train)
+nw_train = nw_train[:500]
+nw_test = shuffle(nw_test)
+nw_test = nw_test[:100]
 
 im_sz = 72
-X = []
-y = []
+X_train = []
+y_train = []
+X_test = []
+y_test = []
 np.random.seed(42)
-for filename in os.listdir(r'wildebeest_images/yes'):
-    filename = "wildebeest_images/yes/" + filename
+
+for index, row in w_train.iterrows():
+    filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
-    img = img.resize([im_sz,im_sz])
+    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
     arr = np.array(img)
-    X.append(arr)
-    y.append(1)
+    X_train.append(arr)
+    y_train.append(1)
 
-for filename in os.listdir(r'wildebeest_images/no'):
-    filename = "wildebeest_images/no/" + filename
+for index, row in nw_train.iterrows():
+    filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
-    #img = img.resize([64, 64])
-    img = img.resize([im_sz,im_sz])
+    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
     arr = np.array(img)
-    X.append(arr)
-    y.append(0)
+    X_train.append(arr)
+    y_train.append(0)
 
-for filename in os.listdir(r'wildebeest_images/no_contrast'):
-    filename = "wildebeest_images/no_contrast/" + filename
+for index, row in w_test.iterrows():
+    filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
-    #img = img.resize([64, 64])
-    img = img.resize([im_sz,im_sz])
+    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
     arr = np.array(img)
-    X.append(arr)
-    y.append(0)
+    X_test.append(arr)
+    y_test.append(1)
 
-X = np.asarray(X)
-y = np.asarray(y)
-X = X.astype('float32')/255
+for index, row in nw_test.iterrows():
+    filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
+    img = Image.open(filename)
+    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
+    arr = np.array(img)
+    X_test.append(arr)
+    y_test.append(0)
 
-shuffle_index = np.random.permutation(X.shape[0])
-X = X[shuffle_index]
-y = y[shuffle_index]
-y = to_categorical(y,2)
-(X_train, y_train), (X_test, y_test) = (X[:8000], y[:8000]), (X[8000:], y[8000:])
+X_train = np.asarray(X_train)
+y_train = np.asarray(y_train)
+X_test = np.asarray(X_test)
+y_test = np.asarray(y_test)
+X_train = X_train.astype('float32')/255
+X_test = X_test.astype('float32')/255
+
+shuffle_index = np.random.permutation(X_train.shape[0])
+X_train = X_train[shuffle_index]
+y_train = y_train[shuffle_index]
+y_train = to_categorical(y_train,2)
+y_test = to_categorical(y_test,2)
 print('Train set size : ', X_train.shape[0])
 print('Test set size : ', X_test.shape[0])
-
-
-# In[8]:
-
-
-from keras.preprocessing.image import ImageDataGenerator
 
 datagen = ImageDataGenerator(zoom_range=0.2, vertical_flip=True,
                              horizontal_flip=True)
@@ -132,20 +95,8 @@ datagen = ImageDataGenerator(zoom_range=0.2, vertical_flip=True,
 
 # train the model
 start = time.time()
-# Train the model
 model_info = model.fit_generator(datagen.flow(X_train, y_train, batch_size = 128),
                                  steps_per_epoch = 512, nb_epoch = 200, 
                                  validation_data = (X_test, y_test), verbose=1)
 end = time.time()
 model.save_weights('cifar_weights.h5')
-
-
-# In[6]:
-
-
-
-
-# In[ ]:
-
-
-
