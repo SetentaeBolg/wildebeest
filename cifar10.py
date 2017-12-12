@@ -45,7 +45,9 @@ np.random.seed(42)
 for index, row in w_train.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
-    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
+    img = img.crop((max(row['xcoord'] - (im_sz // 2), 0), max(row['ycoord'] - (im_sz // 2), 0),
+                    min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
+                    min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
     X_train.append(arr)
     y_train.append(1)
@@ -53,7 +55,9 @@ for index, row in w_train.iterrows():
 for index, row in nw_train.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
-    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
+    img = img.crop((max(row['xcoord'] - (im_sz // 2), 0), max(row['ycoord'] - (im_sz // 2), 0),
+                    min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
+                    min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
     X_train.append(arr)
     y_train.append(0)
@@ -61,7 +65,9 @@ for index, row in nw_train.iterrows():
 for index, row in w_test.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
-    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
+    img = img.crop((max(row['xcoord'] - (im_sz // 2), 0), max(row['ycoord'] - (im_sz // 2), 0),
+                    min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
+                    min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
     X_test.append(arr)
     y_test.append(1)
@@ -69,7 +75,9 @@ for index, row in w_test.iterrows():
 for index, row in nw_test.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
-    img = img.crop((min(row['xcoord'] - 35, 0), min(row['ycoord'] - 35, 0), max(min(row['xcoord'] - 35, 0) + 72, img.size[0]), max(min(row['ycoord'] - 35, 0) + 72, img.size[1])))
+    img = img.crop((max(row['xcoord'] - (im_sz // 2), 0), max(row['ycoord'] - (im_sz // 2), 0),
+                    min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
+                    min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
     X_test.append(arr)
     y_test.append(0)
