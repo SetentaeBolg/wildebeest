@@ -7,7 +7,7 @@ from deepModels import getModel
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.utils import shuffle
 
-print('test')
+print('Beginning classifier training')
 root_image_folder = '2015'
 
 model = getModel()
@@ -41,6 +41,8 @@ y_train = []
 X_test = []
 y_test = []
 np.random.seed(42)
+
+print('Aquiring images')
 
 for index, row in w_train.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
@@ -103,8 +105,13 @@ datagen = ImageDataGenerator(zoom_range=0.2, vertical_flip=True,
 
 # train the model
 start = time.time()
+print('Training starts')
 model_info = model.fit_generator(datagen.flow(X_train, y_train, batch_size = 128),
                                  steps_per_epoch = 512, nb_epoch = 200, 
                                  validation_data = (X_test, y_test), verbose=1)
 end = time.time()
+
+print('Training ends')
+
 model.save_weights('cifar_weights.h5')
+print('Total time taken:' + str(end - start))
