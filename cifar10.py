@@ -26,21 +26,21 @@ nw_train = pd.read_csv('isolated_non_wildebeest.csv')
 nw_test = nw_train[nw_train['image_name'].isin(list(test_images.loc[:].values.flatten()))]
 nw_train = nw_train[nw_train['image_name'].isin(list(train_images.loc[:].values.flatten()))]
 
+np.random.seed(42)
 w_train = shuffle(w_train)
 w_train = w_train[:500]
 w_test = shuffle(w_test)
-w_test = w_test[:100]
+w_test = w_test[:101]
 nw_train = shuffle(nw_train)
 nw_train = nw_train[:500]
 nw_test = shuffle(nw_test)
-nw_test = nw_test[:100]
+nw_test = nw_test[:101]
 
 im_sz = 72
 X_train = []
 y_train = []
 X_test = []
 y_test = []
-np.random.seed(42)
 
 print('Aquiring images')
 
@@ -51,8 +51,11 @@ for index, row in w_train.iterrows():
                     min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
                     min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
-    X_train.append(arr)
-    y_train.append(1)
+    if arr.shape != (72,72,3):
+        print(filename + ' (' + str(row['xcoord']) + ',' + str(row['ycoord']) + ') ' + str(arr.shape))
+    else:
+        X_train.append(arr)
+        y_train.append(1)
 
 for index, row in nw_train.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
@@ -60,9 +63,12 @@ for index, row in nw_train.iterrows():
     img = img.crop((max(row['xcoord'] - (im_sz // 2), 0), max(row['ycoord'] - (im_sz // 2), 0),
                     min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
                     min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
-    arr = np.array(img)
-    X_train.append(arr)
-    y_train.append(0)
+    arr = np.array(img)a
+    if arr.shape != (72,72,3):
+        print(filename + ' (' + str(row['xcoord']) + ',' + str(row['ycoord']) + ') ' + str(arr.shape))
+    else:
+        X_train.append(arr)
+        y_train.append(0)
 
 for index, row in w_test.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
@@ -71,8 +77,11 @@ for index, row in w_test.iterrows():
                     min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
                     min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
-    X_test.append(arr)
-    y_test.append(1)
+    if arr.shape != (72,72,3):
+        print(filename + ' (' + str(row['xcoord']) + ',' + str(row['ycoord']) + ') ' + str(arr.shape))
+    else:
+        X_test.append(arr)
+        y_test.append(1)
 
 for index, row in nw_test.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
@@ -81,8 +90,12 @@ for index, row in nw_test.iterrows():
                     min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
                     min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
-    X_test.append(arr)
-    y_test.append(0)
+
+    if arr.shape != (72,72,3):
+        print(filename + ' (' + str(row['xcoord']) + ',' + str(row['ycoord']) + ') ' + str(arr.shape))
+    else:
+        X_test.append(arr)
+        y_test.append(0)
 
 X_train = np.asarray(X_train)
 y_train = np.asarray(y_train)
