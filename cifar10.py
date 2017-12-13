@@ -43,7 +43,7 @@ y_train = []
 X_test = []
 y_test = []
 
-print('Aquiring images')
+print('Acquiring images')
 
 for index, row in w_train.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
