@@ -63,7 +63,7 @@ for index, row in nw_train.iterrows():
     img = img.crop((max(row['xcoord'] - (im_sz // 2), 0), max(row['ycoord'] - (im_sz // 2), 0),
                     min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
                     min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
-    arr = np.array(img)a
+    arr = np.array(img)
     if arr.shape != (72,72,3):
         print(filename + ' (' + str(row['xcoord']) + ',' + str(row['ycoord']) + ') ' + str(arr.shape))
     else:
@@ -90,7 +90,6 @@ for index, row in nw_test.iterrows():
                     min(max(row['xcoord'] - (im_sz // 2), 0) + im_sz, img.size[0]),
                     min(max(row['ycoord'] - (im_sz // 2), 0) + im_sz, img.size[1])))
     arr = np.array(img)
-
     if arr.shape != (72,72,3):
         print(filename + ' (' + str(row['xcoord']) + ',' + str(row['ycoord']) + ') ' + str(arr.shape))
     else:
