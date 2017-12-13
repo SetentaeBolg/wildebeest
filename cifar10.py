@@ -18,7 +18,8 @@ train_images.columns = ['SWC_image']
 test_images = pd.read_csv('test.txt', header=None)
 test_images.columns = ['SWC_image']
 
-w_train = pd.read_csv('swc_zooniverse_cluster_found_coords_xycorrected.csv')
+w_train = pd.read_csv('2015-Z-LOCATIONS.csv')
+w_train = w_train.loc[w_train['xcoord'] > 36 and w_train['xcoord'] < 7331 and w_train['ycoord'] > 36 and w_train['ycoord'] < 4880]
 w_test = w_train[w_train['image_name'].isin(list(test_images.loc[:].values.flatten()))]
 w_train = w_train[w_train['image_name'].isin(list(train_images.loc[:].values.flatten()))]
 
