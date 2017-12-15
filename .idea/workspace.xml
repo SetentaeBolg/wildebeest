@@ -6,21 +6,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4bcf09d-f62b-4376-ae61-27e2f88cf9c3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/fcn_cifar10.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/segdatagenerator.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/isolated_wildebeest.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resnet_model.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/seg_data_generator.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/swc_zooniverse_cluster_found_coords.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/swc_zooniverse_cluster_found_coords_xycorrected.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/swc_zooniverse_data_22Nov17_xycorrected.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/train.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/train.txt" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fcn_cifar10_weights.h5" afterPath="$PROJECT_DIR$/fcn_cifar10_weights.h5" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buildsemantictruth.py" afterPath="$PROJECT_DIR$/buildsemantictruth.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/find_training_images_class.py" afterPath="$PROJECT_DIR$/find_training_images_class.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transfer_test_cifar.py" afterPath="$PROJECT_DIR$/transfer_test_cifar.py" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -70,8 +55,8 @@
       <file leaf-file-name="transfer_test_cifar.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transfer_test_cifar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="56" column="28" lean-forward="false" selection-start-line="56" selection-start-column="28" selection-end-line="56" selection-end-column="28" />
+            <state relative-caret-position="17">
+              <caret line="38" column="9" lean-forward="true" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
               <folding>
                 <element signature="e#1#19#0" expanded="true" />
               </folding>
@@ -789,8 +774,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/transfer_test_cifar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="56" column="28" lean-forward="false" selection-start-line="56" selection-start-column="28" selection-end-line="56" selection-end-column="28" />
+        <state relative-caret-position="17">
+          <caret line="38" column="9" lean-forward="true" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
           <folding>
             <element signature="e#1#19#0" expanded="true" />
           </folding>

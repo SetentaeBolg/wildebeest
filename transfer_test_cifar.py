@@ -7,8 +7,8 @@ import cv2
 np.random.seed(2017)
 from deepModels import getModel, getSegModel
 
-nx = 7360
-ny = 4912
+nx = 2000
+ny = 2000
 
 fcnmodel = getSegModel(ny,nx)
 
@@ -54,9 +54,8 @@ img = Image.open(filename)
 arr = np.array(img)
 print(arr.shape)
 X.append(arr.transpose(1,0,2))
-X.append(arr.transpose(1,0,2))
 print(X[0].shape)
-img = Image.fromarray(X[0])
+img = Image.fromarray(X[0].tranpose(1,0,2))
 img.save('2015/test/input.png')
 
 X = np.asarray(X)
