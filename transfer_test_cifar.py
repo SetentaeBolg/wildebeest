@@ -55,7 +55,7 @@ arr = np.array(img)
 print(arr.shape)
 X.append(arr.transpose(1,0,2))
 print(X[0].shape)
-img = Image.fromarray(X[0].tranpose(1,0,2))
+img = Image.fromarray(X[0].transpose(1,0,2))
 img.save('2015/test/input.png')
 
 X = np.asarray(X)
