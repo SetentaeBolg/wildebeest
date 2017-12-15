@@ -107,7 +107,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
 
     scheduler = LearningRateScheduler(lr_scheduler)
 
-    checkpoint_path = os.path.join(save_path, 'checkpoint_weights.hdf5')
+    checkpoint_path = os.path.join(save_path, 'checkpoint_weights.h5')
 
     model = getSegModel(input_width=input_shape[0], input_height=input_shape[1])
 
@@ -119,6 +119,8 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
 
     if resume_training:
         model.load_weights(checkpoint_path, by_name=True)
+    else:
+        model.load_weights('fcn_cifar10_weights.h5')
 
     model_path = os.path.join(save_path, "model.json")
 
@@ -136,7 +138,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     tensorboard = TensorBoard(log_dir=os.path.join(save_path, 'logs'), histogram_freq=10, write_graph=True)
     callbacks.append(tensorboard)
     # ################### checkpoint saver#######################
-    checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, 'checkpoint_weights.hdf5'), save_weights_only=True)#.{epoch:d}
+    checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, 'checkpoint_weights.h5'), save_weights_only=True)#.{epoch:d}
     callbacks.append(checkpoint)
     # set data generator and train
     train_datagen = SegDataGenerator(zoom_range=[0.5, 2.0],
@@ -186,7 +188,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
         class_weight=class_weight
        )
 
-    model.save_weights(save_path+'/model.hdf5')
+    model.save_weights(save_path+'/fcn_cifar10_weights.h5')
 
 model_name = 'fcn_cifar10'
 batch_size = 16

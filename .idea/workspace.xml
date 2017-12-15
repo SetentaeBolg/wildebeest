@@ -57,10 +57,11 @@
       <file leaf-file-name="transfer_test_cifar.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transfer_test_cifar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="935">
-              <caret line="55" column="40" lean-forward="false" selection-start-line="55" selection-start-column="40" selection-end-line="55" selection-end-column="40" />
+            <state relative-caret-position="952">
+              <caret line="56" column="30" lean-forward="false" selection-start-line="56" selection-start-column="30" selection-end-line="56" selection-end-column="30" />
               <folding>
                 <element signature="e#1#19#0" expanded="true" />
+                <marker date="1513334695798" expanded="true" signature="1835:3888" ph="..." />
               </folding>
             </state>
           </provider>
@@ -93,8 +94,8 @@
       <file leaf-file-name="fcn_cifar10.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fcn_cifar10.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-236">
-              <caret line="178" column="0" lean-forward="false" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+            <state relative-caret-position="333">
+              <caret line="227" column="35" lean-forward="true" selection-start-line="227" selection-start-column="35" selection-end-line="227" selection-end-column="35" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -131,6 +132,7 @@
       <find>seg_data_generator</find>
       <find>transform_matrix_offset_center</find>
       <find>_feed_input_shapes</find>
+      <find>load_weights</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -715,10 +717,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/transfer_test_cifar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="935">
-          <caret line="55" column="40" lean-forward="false" selection-start-line="55" selection-start-column="40" selection-end-line="55" selection-end-column="40" />
+        <state relative-caret-position="952">
+          <caret line="56" column="30" lean-forward="false" selection-start-line="56" selection-start-column="30" selection-end-line="56" selection-end-column="30" />
           <folding>
             <element signature="e#1#19#0" expanded="true" />
+            <marker date="1513334695798" expanded="true" signature="1835:3888" ph="..." />
           </folding>
         </state>
       </provider>
@@ -781,8 +784,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fcn_cifar10.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-236">
-          <caret line="178" column="0" lean-forward="false" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+        <state relative-caret-position="333">
+          <caret line="227" column="35" lean-forward="true" selection-start-line="227" selection-start-column="35" selection-end-line="227" selection-end-column="35" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
