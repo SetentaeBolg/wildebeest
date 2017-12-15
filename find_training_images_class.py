@@ -6,6 +6,8 @@ import itertools
 from sklearn.utils import shuffle
 from PIL import Image
 
+np.random.seed(42)
+
 root_image_folder = '2015'
 small_image_folder = os.path.join(root_image_folder, 'small_images')
 
@@ -60,7 +62,6 @@ X_train = []
 y_train = []
 X_test = []
 y_test = []
-np.random.seed(42)
 
 for index, row in w_train.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
