@@ -122,14 +122,6 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     else:
         model.load_weights('fcn_cifar10_weights.h5')
 
-    model_path = os.path.join(save_path, "model.json")
-
-    # save model structure
-    f = open(model_path, 'w')
-    model_json = model.to_json()
-    f.write(model_json)
-    f.close
-
     model.summary()
 
     callbacks = [scheduler]
