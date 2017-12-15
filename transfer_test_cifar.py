@@ -53,7 +53,7 @@ filename = "2015/SWC1717.JPG"
 img = Image.open(filename)
 arr = np.array(img)
 print(arr.shape)
-X.append(arr.transpose(1,0,2))
+X.append(arr.transpose(1,0,2))[:nx,:ny,:]
 print(X[0].shape)
 img = Image.fromarray(X[0].transpose(1,0,2))
 img.save('2015/test/input.png')
