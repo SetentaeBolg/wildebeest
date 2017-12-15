@@ -66,7 +66,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
           metrics = [sparse_accuracy_ignoring_last_label],
           loss_shape=None,
           label_suffix='.png',
-          data_suffix='.jpg',
+          data_suffix='.JPG',
           ignore_label=255,
           label_cval=255):
     if target_size:
@@ -121,14 +121,6 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
         model.load_weights(checkpoint_path, by_name=True)
     else:
         model.load_weights('fcn_cifar10_weights.h5')
-
-    model_path = os.path.join(save_path, "model.json")
-
-    # save model structure
-    f = open(model_path, 'w')
-    model_json = model.to_json()
-    f.write(model_json)
-    f.close
 
     model.summary()
 
@@ -206,7 +198,7 @@ train_file_path = os.path.expanduser('2015-checked-train.txt') #Data/VOClarge/VO
 #val_file_path   = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_val.txt')
 data_dir        = os.path.expanduser('2015')
 label_dir       = os.path.expanduser('2015/truth')
-data_suffix='.jpg'
+data_suffix='.JPG'
 label_suffix='.png'
 classes = 2
 
