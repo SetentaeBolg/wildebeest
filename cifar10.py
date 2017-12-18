@@ -9,7 +9,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from sklearn.utils import shuffle
 
 print('Beginning classifier training')
-root_image_folder = '2015'
+root_image_folder = '/home/staff1/ctorney/workspace/deepWildCount/data/2015'
 
 model = getModel()
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
