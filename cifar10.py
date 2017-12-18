@@ -14,9 +14,9 @@ root_image_folder = '2015'
 model = getModel()
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-train_images = pd.read_csv('train.txt', header=None)
+train_images = pd.read_csv('2015-checked-train.txt', header=None)
 train_images.columns = ['SWC_image']
-test_images = pd.read_csv('test.txt', header=None)
+test_images = pd.read_csv('2015-checked-test.txt', header=None)
 test_images.columns = ['SWC_image']
 
 w_train = pd.read_csv('2015-Z-LOCATIONS.csv')
@@ -32,11 +32,11 @@ np.random.seed(42)
 w_train = shuffle(w_train)
 w_train = w_train[:500]
 w_test = shuffle(w_test)
-w_test = w_test[:101]
+w_test = w_test[:100]
 nw_train = shuffle(nw_train)
 nw_train = nw_train[:500]
 nw_test = shuffle(nw_test)
-nw_test = nw_test[:101]
+nw_test = nw_test[:100]
 
 im_sz = 72
 X_train = []
@@ -102,8 +102,8 @@ X_train = np.asarray(X_train)
 y_train = np.asarray(y_train)
 X_test = np.asarray(X_test)
 y_test = np.asarray(y_test)
-#X_train = X_train.astype('float32')/255
-#X_test = X_test.astype('float32')/255
+X_train = X_train.astype('float32')/255
+X_test = X_test.astype('float32')/255
 
 shuffle_index = np.random.permutation(X_train.shape[0])
 X_train = X_train[shuffle_index]
