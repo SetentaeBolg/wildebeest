@@ -14,9 +14,9 @@ root_image_folder = '/home/staff1/ctorney/workspace/deepWildCount/data/2015'
 model = getModel()
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-train_images = pd.read_csv('train.txt', header=None)
+train_images = pd.read_csv('2015-checked-train.txt', header=None)
 train_images.columns = ['SWC_image']
-test_images = pd.read_csv('test.txt', header=None)
+test_images = pd.read_csv('2015-checked-test.txt', header=None)
 test_images.columns = ['SWC_image']
 
 w_train = pd.read_csv('2015-Z-LOCATIONS.csv')
@@ -32,11 +32,11 @@ np.random.seed(42)
 w_train = shuffle(w_train)
 w_train = w_train[:500]
 w_test = shuffle(w_test)
-w_test = w_test[:101]
+w_test = w_test[:100]
 nw_train = shuffle(nw_train)
 nw_train = nw_train[:500]
 nw_test = shuffle(nw_test)
-nw_test = nw_test[:101]
+nw_test = nw_test[:100]
 
 im_sz = 72
 X_train = []
@@ -85,6 +85,8 @@ for index, row in w_test.iterrows():
         X_test.append(arr)
         y_test.append(1)
 
+print('After WB test data loaded, X_test:' + str(X_test.shape[0]))
+
 for index, row in nw_test.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
     img = Image.open(filename)
@@ -97,6 +99,8 @@ for index, row in nw_test.iterrows():
     else:
         X_test.append(arr)
         y_test.append(0)
+
+print('After NWB test data loaded, X_test:' + str(X_test.shape[0]))
 
 X_train = np.asarray(X_train)
 y_train = np.asarray(y_train)
