@@ -38,6 +38,8 @@ nw_train = nw_train[:500]
 nw_test = shuffle(nw_test)
 nw_test = nw_test[:100]
 
+print('nw_test:' + str(nw_test.shape))
+
 im_sz = 72
 X_train = []
 y_train = []
@@ -85,7 +87,7 @@ for index, row in w_test.iterrows():
         X_test.append(arr)
         y_test.append(1)
 
-print('After WB test data loaded, X_test:' + str(X_test.shape[0]))
+print('After WB test data loaded, X_test:' + str(len(X_test)))
 
 for index, row in nw_test.iterrows():
     filename = os.path.join(root_image_folder, row['image_name'] + '.JPG')
@@ -100,22 +102,24 @@ for index, row in nw_test.iterrows():
         X_test.append(arr)
         y_test.append(0)
 
-print('After NWB test data loaded, X_test:' + str(X_test.shape[0]))
+print('After NWB test data loaded, X_test:' + str(len(X_test)))
 
 X_train = np.asarray(X_train)
 y_train = np.asarray(y_train)
 X_test = np.asarray(X_test)
 y_test = np.asarray(y_test)
-X_train = X_train.astype('float32')/255
-X_test = X_test.astype('float32')/255
+print('After array conversion, X_test:' + str(X_test.shape))
+#X_train = X_train.astype('float32')/255
+#X_test = X_test.astype('float32')/255
+print('After float conversion, X_test:' + str(X_test.shape))
 
 shuffle_index = np.random.permutation(X_train.shape[0])
 X_train = X_train[shuffle_index]
 y_train = y_train[shuffle_index]
 y_train = to_categorical(y_train,2)
 y_test = to_categorical(y_test,2)
-print('Train set size : ', X_train.shape[0])
-print('Test set size : ', X_test.shape[0])
+print('Train set size : ', X_train.shape)
+print('Test set size : ', X_test.shape)
 
 datagen = ImageDataGenerator(zoom_range=0.2, vertical_flip=True,
                              horizontal_flip=True)
