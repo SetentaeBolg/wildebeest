@@ -109,8 +109,8 @@ y_train = np.asarray(y_train)
 X_test = np.asarray(X_test)
 y_test = np.asarray(y_test)
 print('After array conversion, X_test:' + str(X_test.shape))
-#X_train = X_train.astype('float32')/255
-#X_test = X_test.astype('float32')/255
+X_train = X_train.astype('float32')/255
+X_test = X_test.astype('float32')/255
 print('After float conversion, X_test:' + str(X_test.shape))
 
 shuffle_index = np.random.permutation(X_train.shape[0])

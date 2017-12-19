@@ -1,6 +1,7 @@
+from segdatagen2 import *
 import numpy as np
-import matplotlib.pyplot as plt
-from pylab import *
+# import matplotlib.pyplot as plt
+# from pylab import *
 import os
 import sys
 import pickle
@@ -13,7 +14,7 @@ import keras.backend as K
 #import keras.utils.visualize_util as vis_util
 
 from deepModels import *
-from segdatagenerator import *
+# from segdatagenerator import *
 import time
 import tensorflow as tf
 
@@ -133,16 +134,16 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, 'checkpoint_weights.h5'), save_weights_only=True)#.{epoch:d}
     callbacks.append(checkpoint)
     # set data generator and train
-    train_datagen = SegDataGenerator(zoom_range=[0.5, 2.0],
-                                     zoom_maintain_shape=True,
-                                     crop_mode='random',
-                                     crop_size=target_size,
-                                     rotation_range=0.,
-                                     shear_range=0,
-                                     horizontal_flip=True,
-                                     channel_shift_range=20.,
-                                     fill_mode='constant',
-                                     label_cval=label_cval)
+#     train_datagen = SegDataGenerator(zoom_range=[0.5, 2.0],
+#                                      zoom_maintain_shape=True,
+#                                      crop_mode='random',
+#                                      crop_size=target_size,
+#                                      rotation_range=0.,
+#                                      shear_range=0,
+#                                      horizontal_flip=True,
+#                                      channel_shift_range=20.,
+#                                      fill_mode='constant',
+#                                      label_cval=label_cval)
 
     def get_file_len(file_path):
         fp = open(file_path)
@@ -154,22 +155,28 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     # and starting the next epoch. It should typically be equal to the number of unique samples of your dataset divided by the batch size.
     steps_per_epoch = int(np.ceil(get_file_len(train_file_path) / float(batch_size)))
 
+    training_generator = SegDataGen2('2015-checked-train.txt',7360,4912,2).generate(data_dir,label_dir,2)
+    test_generator = SegDataGen2('2015-checked-test.txt',7360,4912,2).generate(data_dir,label_dir,2)
+
     history = model.fit_generator(
-        generator=train_datagen.flow_from_directory(
-            file_path=train_file_path,
-            data_dir=data_dir, data_suffix=data_suffix,
-            label_dir=label_dir, label_suffix=label_suffix,
-            classes=classes,
-            target_size=target_size, color_mode='rgb',
-            batch_size=batch_size, shuffle=True,
-            loss_shape=loss_shape,
-            ignore_label=ignore_label,
+#        generator=train_datagen.flow_from_directory(
+        generator=training_generator,
+#            file_path=train_file_path,
+#            data_dir=data_dir, data_suffix=data_suffix,
+#            label_dir=label_dir, label_suffix=label_suffix,
+#            classes=classes,
+#            target_size=target_size, color_mode='rgb',
+#            batch_size=batch_size, shuffle=True,
+#            loss_shape=loss_shape,
+#            ignore_label=ignore_label,
             # save_to_dir='Images/'
-        ),
+#         ),
         steps_per_epoch=steps_per_epoch,
         epochs=epochs,
         callbacks=callbacks,
-        workers=4,
+#         workers=4,
+        validation_steps = 500, 
+        validation_data = test_generator,
         # validation_data=val_datagen.flow_from_directory(
         #     file_path=val_file_path, data_dir=data_dir, data_suffix='.jpg',
         #     label_dir=label_dir, label_suffix='.png',classes=classes,
@@ -183,21 +190,21 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     model.save_weights(save_path+'/fcn_cifar10_weights.h5')
 
 model_name = 'fcn_cifar10'
-batch_size = 16
+batch_size = 2
 batchnorm_momentum = 0.95
 epochs = 250
 lr_base = 0.01 * (float(batch_size) / 16)
 lr_power = 0.9
 resume_training = False
 weight_decay = 1e-4
-target_size = (320, 320)
+target_size = (7360, 4912)
 dataset = 'DIY'
 
 #train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_train.txt')
 train_file_path = os.path.expanduser('2015-checked-train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
 #val_file_path   = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_val.txt')
-data_dir        = os.path.expanduser('2015')
-label_dir       = os.path.expanduser('2015/truth')
+data_dir        = os.path.expanduser('2015/')
+label_dir       = os.path.expanduser('2015/truth/')
 data_suffix='.JPG'
 label_suffix='.png'
 classes = 2
