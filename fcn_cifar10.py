@@ -166,7 +166,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
         epochs=epochs,
         callbacks=callbacks,
 #         workers=4,
-        validation_steps = 500, 
+        validation_steps = 1000, 
         validation_data = test_generator,
         # validation_data=val_datagen.flow_from_directory(
         #     file_path=val_file_path, data_dir=data_dir, data_suffix='.jpg',
@@ -188,7 +188,7 @@ lr_base = 0.01 * (float(batch_size) / 16)
 lr_power = 0.9
 resume_training = False
 weight_decay = 1e-4
-target_size = (7360, 4912)
+target_size = (1500, 1500)
 dataset = 'DIY'
 
 #train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_train.txt')
