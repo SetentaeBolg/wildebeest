@@ -19,43 +19,43 @@ import time
 import tensorflow as tf
 
 
-def sparse_accuracy_ignoring_last_label(y_true, y_pred):
+# def sparse_accuracy_ignoring_last_label(y_true, y_pred):
 
-    nb_classes = K.int_shape(y_pred)[-1]
-    y_pred = K.reshape(y_pred, (-1, nb_classes))
+#     nb_classes = K.int_shape(y_pred)[-1]
+#     y_pred = K.reshape(y_pred, (-1, nb_classes))
 
-    y_true = K.one_hot(tf.to_int32(K.flatten(y_true)),
-                       nb_classes + 1)
-    unpacked = tf.unstack(y_true, axis=-1)
-    legal_labels = ~tf.cast(unpacked[-1], tf.bool)
-    y_true = tf.stack(unpacked[:-1], axis=-1)
+#     y_true = K.one_hot(tf.to_int32(K.flatten(y_true)),
+#                        nb_classes + 1)
+#     unpacked = tf.unstack(y_true, axis=-1)
+#     legal_labels = ~tf.cast(unpacked[-1], tf.bool)
+#     y_true = tf.stack(unpacked[:-1], axis=-1)
 
-    return K.sum(tf.to_float(legal_labels & K.equal(K.argmax(y_true, axis=-1), K.argmax(y_pred, axis=-1)))) / K.sum(tf.to_float(legal_labels))
+#     return K.sum(tf.to_float(legal_labels & K.equal(K.argmax(y_true, axis=-1), K.argmax(y_pred, axis=-1)))) / K.sum(tf.to_float(legal_labels))
 
 
 # Softmax cross-entropy loss function for pascal voc segmentation
 # and models which do not perform softmax.
 # tensorlow only
-def softmax_sparse_crossentropy_ignoring_last_label(y_true, y_pred):
-    y_pred = K.reshape(y_pred, (-1, K.int_shape(y_pred)[-1]))
-    log_softmax = tf.nn.log_softmax(y_pred)
+# def softmax_sparse_crossentropy_ignoring_last_label(y_true, y_pred):
+#     y_pred = K.reshape(y_pred, (-1, K.int_shape(y_pred)[-1]))
+#     log_softmax = tf.nn.log_softmax(y_pred)
 
-    y_true = K.one_hot(tf.to_int32(K.flatten(y_true)), K.int_shape(y_pred)[-1]+1)
-    unpacked = tf.unstack(y_true, axis=-1)
-    y_true = tf.stack(unpacked[:-1], axis=-1)
+#     y_true = K.one_hot(tf.to_int32(K.flatten(y_true)), K.int_shape(y_pred)[-1]+1)
+#     unpacked = tf.unstack(y_true, axis=-1)
+#     y_true = tf.stack(unpacked[:-1], axis=-1)
 
-    cross_entropy = -K.sum(y_true * log_softmax, axis=1)
-    cross_entropy_mean = K.mean(cross_entropy)
+#     cross_entropy = -K.sum(y_true * log_softmax, axis=1)
+#     cross_entropy_mean = K.mean(cross_entropy)
 
-    return cross_entropy_mean
+#     return cross_entropy_mean
 
 
 def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
           model_name, train_file_path, val_file_path,
           data_dir, label_dir, target_size=None, batchnorm_momentum=0.9,
           resume_training=False, class_weight=None, dataset='VOC2012',
-          loss_fn = softmax_sparse_crossentropy_ignoring_last_label,
-          metrics = [sparse_accuracy_ignoring_last_label],
+          loss_fn = 'categorical_crossentropy',
+          metrics = ['accuracy'],
           loss_shape=None,
           label_suffix='.png',
           data_suffix='.JPG',
@@ -71,7 +71,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     current_dir = os.path.dirname(os.path.realpath(__file__))
     save_path = os.path.join(current_dir, model_name)
     # ###############learning rate scheduler####################
-    def lr_scheduler(epoch, mode='power_decay'):
+    def lr_scheduler(epoch, mode='adam'):
 
         if mode is 'power_decay':
             # original lr scheduler
@@ -101,12 +101,12 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
 
     checkpoint_path = os.path.join(save_path, 'checkpoint_weights.h5')
 
-    model = getSegModel(input_width=1500, input_height=1500)
+    model = getSegModel(input_width=target_size[0], input_height=target_size[1])
 
     optimizer = SGD(lr=lr_base, momentum=0.9)
 
     model.compile(loss=loss_fn,
-                  optimizer=optimizer,
+                  optimizer=optimizer,#optimizer,
                   metrics=metrics)
 
     if resume_training:
@@ -119,8 +119,8 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     callbacks = [scheduler]
 
     # ####################### tfboard ###########################
-    tensorboard = TensorBoard(log_dir=os.path.join(save_path, 'logs'), histogram_freq=10, write_graph=True)
-    callbacks.append(tensorboard)
+    # tensorboard = TensorBoard(log_dir=os.path.join(save_path, 'logs'), histogram_freq=10, write_graph=True)
+    # callbacks.append(tensorboard)
     # ################### checkpoint saver#######################
     checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, 'checkpoint_weights.h5'), save_weights_only=True)#.{epoch:d}
     callbacks.append(checkpoint)
@@ -146,8 +146,8 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     # and starting the next epoch. It should typically be equal to the number of unique samples of your dataset divided by the batch size.
     steps_per_epoch = int(np.ceil(get_file_len(train_file_path) / float(batch_size)))
 
-    training_generator = SegDataGen2('2015-checked-train.txt',1500,1500,1).generate(data_dir,label_dir,2)
-    test_generator = SegDataGen2('2015-checked-test.txt',1500,1500,1).generate(data_dir,label_dir,2)
+    training_generator = SegDataGen2('2015-checked-train.txt',target_size[0],target_size[1],batch_size).generate(data_dir,label_dir,2)
+    test_generator = SegDataGen2('2015-checked-test.txt',target_size[0],target_size[1],batch_size).generate(data_dir,label_dir,2)
 
     history = model.fit_generator(
 #        generator=train_datagen.flow_from_directory(
@@ -166,7 +166,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
         epochs=epochs,
         callbacks=callbacks,
 #         workers=4,
-        validation_steps = 1000, 
+        validation_steps = 10, # 1000 // batch_size, 
         validation_data = test_generator,
         # validation_data=val_datagen.flow_from_directory(
         #     file_path=val_file_path, data_dir=data_dir, data_suffix='.jpg',
@@ -181,14 +181,14 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     model.save_weights(save_path+'/fcn_cifar10_weights.h5')
 
 model_name = 'fcn_cifar10'
-batch_size = 2
+batch_size = 4
 batchnorm_momentum = 0.95
 epochs = 250
 lr_base = 0.01 * (float(batch_size) / 16)
 lr_power = 0.9
 resume_training = False
 weight_decay = 1e-4
-target_size = (1500, 1500)
+target_size = (1000, 1000)
 dataset = 'DIY'
 
 #train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_train.txt')
@@ -201,8 +201,8 @@ label_suffix='.png'
 classes = 2
 
 # ###################### loss function & metric ########################
-loss_fn = softmax_sparse_crossentropy_ignoring_last_label
-metrics = [sparse_accuracy_ignoring_last_label]
+loss_fn = 'categorical_crossentropy'
+metrics = ['accuracy']
 loss_shape = None
 ignore_label = 255
 label_cval = 255

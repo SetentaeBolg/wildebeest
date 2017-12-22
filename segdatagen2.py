@@ -18,13 +18,14 @@ class SegDataGen2(object):
 
 		try:
 			img = Image.open(path)
-			if np.array(img).shape[0] > width or np.array(img).shape[1] > height:
+			if np.array(img).shape[0] > width and np.array(img).shape[1] > height:
 				img = img.crop(((np.array(img).shape[0] // 2) - (width // 2),
 					(np.array(img).shape[1] // 2) - (height // 2),
 					(np.array(img).shape[0] // 2) - (width // 2) + width,
 					(np.array(img).shape[1] // 2) - (height // 2) + height))
 			img = np.array(img).astype(np.float32)
 			img = img/255.0
+			assert img.shape == (width, height, 3)
 
 			return img
 		except Exception as e:
@@ -38,7 +39,7 @@ class SegDataGen2(object):
 
 	def getSegmentationArr( self, path , nClasses ,  width , height  ):
 
-		seg_labels = np.zeros((  height , width  , nClasses ))
+		seg_labels = np.zeros((  width , height  , nClasses ))
 		try:
 			img = Image.open(path)
 			if np.array(img).shape[0] > width or np.array(img).shape[1] > height:
