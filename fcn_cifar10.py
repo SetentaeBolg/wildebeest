@@ -124,6 +124,10 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     # ################### checkpoint saver#######################
     checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, 'checkpoint_weights.h5'), save_weights_only=True)#.{epoch:d}
     callbacks.append(checkpoint)
+
+    earlystopping = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
+    callbacks.append(earlystopping)
+
     # set data generator and train
 #     train_datagen = SegDataGenerator(zoom_range=[0.5, 2.0],
 #                                      zoom_maintain_shape=True,
@@ -165,8 +169,8 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
         steps_per_epoch=steps_per_epoch,
         epochs=epochs,
         callbacks=callbacks,
-#         workers=4,
-        validation_steps = 10, # 1000 // batch_size, 
+#        workers=4,
+        validation_steps = 100, # 1000 // batch_size, 
         validation_data = test_generator,
         # validation_data=val_datagen.flow_from_directory(
         #     file_path=val_file_path, data_dir=data_dir, data_suffix='.jpg',
@@ -181,7 +185,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
     model.save_weights(save_path+'/fcn_cifar10_weights.h5')
 
 model_name = 'fcn_cifar10'
-batch_size = 4
+batch_size = 10
 batchnorm_momentum = 0.95
 epochs = 250
 lr_base = 0.01 * (float(batch_size) / 16)
