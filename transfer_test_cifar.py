@@ -47,7 +47,7 @@ num_classes=2
 #         print(layer.name, ' ', i, ': ', weights[i].shape)
 # 
 # fcnmodel.save_weights('fcn_cifar10_weights.h5')
-
+fcnmodel.load_weights('fcn_cifar10/fcn_cifar10_weights.h5')
 # test FCN on section of survey image
 X = []
 filename = "2015/SWC1717.JPG"
