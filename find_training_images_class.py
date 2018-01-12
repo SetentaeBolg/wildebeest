@@ -19,36 +19,42 @@ df.columns = ['SWC_image']
 df13 = pd.read_csv('2015-checked-test.txt', header=None)
 df13.columns = ['SWC_image']
 
-df = df.append(df13)
+# df = df.append(df13)
 
 df2 = pd.read_csv('2015-Z-LOCATIONS.csv')
 
 df2 = df2[df2['image_name'].isin(list(df.loc[:].values.flatten()))]
 
-listx = list(range(0, 7359, 1440))
-listy = list(range(0, 4911, 1440))
+df = df[df.isin(list(df2['image_name'].values.flatten()))]
+df = df.replace('', np.nan)
+df = df.dropna()
 
-listimg = list(df.loc[:].values.flatten())
-df5 = pd.DataFrame(list(itertools.product(listimg,listx,listy)))
+df.to_csv('2015-checked-train-reduced.txt', header=None, index=False, mode='w')
 
-df5.columns = ['image_name', 'xcoord', 'ycoord']
+# listx = list(range(0, 7359, 1440))
+# listy = list(range(0, 4911, 1440))
 
-indexes = []
+# listimg = list(df.loc[:].values.flatten())
+# df5 = pd.DataFrame(list(itertools.product(listimg,listx,listy)))
 
-for index, row in df5.iterrows():
-    df3 = df2[df2['image_name'] == row['image_name']]
-    flag = True
-    if df3.shape[0] > 0:
-        for index2, row2 in df3.iterrows():
-            if np.sqrt((row2['xcoord'] - row['xcoord'])**2 + (row2['ycoord'] - row['ycoord'])**2) < 144:
-                flag = False
-                break
-    if flag == True:
-        indexes.append(index)
+# df5.columns = ['image_name', 'xcoord', 'ycoord']
 
-df6 = df5.loc[indexes]
+# indexes = []
 
-df6.to_csv('isolated_non_wildebeest.csv', index=False, mode='w')
+# for index, row in df5.iterrows():
+#     df3 = df2[df2['image_name'] == row['image_name']]
+#     flag = True
+#     if df3.shape[0] > 0:
+#         for index2, row2 in df3.iterrows():
+#             if np.sqrt((row2['xcoord'] - row['xcoord'])**2 + (row2['ycoord'] - row['ycoord'])**2) < 144:
+#                 flag = False
+#                 break
+#     if flag == True:
+#         indexes.append(index)
+
+# df6 = df5.loc[indexes]
+
+# df6.to_csv('isolated_non_wildebeest.csv', index=False, mode='w')
 
 # crop out images and save in relevant folders for later cifar training
 

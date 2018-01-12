@@ -24,13 +24,13 @@ def weighted_categorical_crossentropy_fcn_loss(y_true, y_pred):
     return K.sum(wcce)
 
 model_name = 'fcn_cifar10'
-batch_size = 16
+batch_size = 32
 epochs = 250
 lr_base = 0.01 * (float(batch_size) / 16)
-target_size = (500, 500)
+target_size = (512, 512)
 class_weights = [0.50038, 666.47713]
 
-train_file_path = os.path.expanduser('2015-checked-train.txt')
+train_file_path = os.path.expanduser('2015-checked-train-reduced.txt')
 val_file_path   = os.path.expanduser('2015-checked-test.txt')
 data_dir        = os.path.expanduser('2015/')
 label_dir       = os.path.expanduser('2015/truth/')
@@ -58,7 +58,11 @@ checkpoint_path = os.path.join(save_path, 'checkpoint_weights.h5')
 
 model = getSegModel(input_width=target_size[0], input_height=target_size[1])
 
-optimizer = SGD(lr=lr_base, momentum=0.9)
+# comment out to refresh model
+# model.load_weights(checkpoint_path)
+model.load_weights('fcn_cifar10_weights_from_classifier.h5')
+
+optimizer = Nadam()
 
 model.compile(loss=loss_fn,
               optimizer=optimizer,
@@ -71,7 +75,7 @@ checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, 'checkpoint_weight
 callbacks = [checkpoint]
 
 # ################### early stopping ########################
-earlystopping = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
+earlystopping = EarlyStopping(monitor='val_loss', patience=6, verbose=1)
 callbacks.append(earlystopping)
 
 # set data generator and train
@@ -84,7 +88,10 @@ def get_file_len(file_path):
 
 # from Keras documentation: Total number of steps (batches of samples) to yield from generator before declaring one epoch finished
 # and starting the next epoch. It should typically be equal to the number of unique samples of your dataset divided by the batch size.
-steps_per_epoch = int(np.ceil(get_file_len(train_file_path) / float(batch_size)))
+#
+# As we are using samples taken from tiles of images and a certain similarity within an image is a reasonable assumption,
+# I am reducing the steps per epoch to a lower amount
+steps_per_epoch = 200 #int(np.ceil(((7360 // target_size[0]) * (4912 // target_size[1]) * get_file_len(train_file_path)) / float(batch_size)))
 
 training_generator = SegDataGen2(train_file_path,target_size[0],target_size[1],batch_size, class_weights).generate(data_dir,label_dir,classes)
 test_generator = SegDataGen2(val_file_path,target_size[0],target_size[1],batch_size, class_weights).generate(data_dir,label_dir,classes)
@@ -94,7 +101,7 @@ history = model.fit_generator(
     steps_per_epoch = steps_per_epoch,
     epochs = epochs,
     callbacks = callbacks,
-    validation_steps = steps_per_epoch // 5, #get_file_len(val_file_path) // batch_size, 
+    validation_steps = steps_per_epoch // 5, #int(np.ceil(((7360 // target_size[0]) * (4912 // target_size[1]) * get_file_len(train_file_path)) / float(batch_size))), 
     validation_data = test_generator
     )
 

@@ -1,4 +1,3 @@
-
 import time,os,sys
 from PIL import Image
 import numpy as np
@@ -8,8 +7,8 @@ from keras.utils.np_utils import to_categorical
 np.random.seed(2017)
 from deepModels import getModel, getSegModel
 
-nx = 1000
-ny = 1000
+nx = 512
+ny = 512
 
 fcnmodel = getSegModel(ny,nx)
 
@@ -17,64 +16,37 @@ fcnmodel = getSegModel(ny,nx)
 num_classes=2
 # Compile the model
 
-# model = getModel()
-# model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model = getModel()
+model.compile(optimizer='nadam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# model.load_weights('cifar_weights.h5')
+model.load_weights('cifar_weights.h5')
 
-# flattened_layers = fcnmodel.layers
-# index = {}
-# for layer in flattened_layers:
-#     if layer.name:
-#         index[layer.name] = layer
-# for layer in model.layers:
-#     weights = layer.get_weights()
-#     for i in range(len(weights)):
-#         print(layer.name, ' ', i, ': ', weights[i].shape)
-#     if layer.name in ['fc1','fc2','predictions']:
-#         if layer.name == 'fc1':
-#             weights[0] = np.reshape(weights[0],(9,9,192,512))
-#         elif layer.name == 'fc2':
-#             weights[0] = np.reshape(weights[0],(1,1,512,256))
-#         else:
-#             weights[0] = np.reshape(weights[0],(1,1,256,2))
-#     if layer.name in index:
-#         index[layer.name].set_weights(weights)
+flattened_layers = fcnmodel.layers
+index = {}
+for layer in flattened_layers:
+    if layer.name:
+        index[layer.name] = layer
+for layer in model.layers:
+    weights = layer.get_weights()
+    for i in range(len(weights)):
+        print(layer.name, ' ', i, ': ', weights[i].shape)
+    if layer.name in ['fc1','fc2','predictions']:
+        if layer.name == 'fc1':
+            weights[0] = np.reshape(weights[0],(9,9,192,512))
+        elif layer.name == 'fc2':
+            weights[0] = np.reshape(weights[0],(1,1,512,256))
+        else:
+            weights[0] = np.reshape(weights[0],(1,1,256,2))
+    if layer.name in index:
+        index[layer.name].set_weights(weights)
 
-# for layer in fcnmodel.layers:
-#     weights = layer.get_weights()
-#     for i in range(len(weights)):
-#         print(layer.name, ' ', i, ': ', weights[i].shape)
-# 
-# fcnmodel.save_weights('fcn_cifar10_weights.h5')
-fcnmodel.load_weights('fcn_cifar10/fcn_cifar10_weights.h5')
-# test FCN on section of survey image
-X = []
-filename = "2015/SWC1717.JPG"
-img = Image.open(filename)
-arr = np.array(img)
-arr = arr[500:ny+500,500:nx+500,:]
-# print(arr.shape)
-X.append(arr.transpose(1,0,2))
-# print(X[0].shape)
-img = Image.fromarray(X[0].transpose(1,0,2))
-img.save('2015/test/input.png')
+for layer in fcnmodel.layers:
+    weights = layer.get_weights()
+    for i in range(len(weights)):
+        print(layer.name, ' ', i, ': ', weights[i].shape)
 
-X = np.asarray(X)
-#X = X.astype('float32')/255
+fcnmodel.save_weights('fcn_cifar10_weights_from_classifier.h5')
 
-print(X.shape)
-
-result = fcnmodel.predict(X)[0]
-predicted_class = np.argmax(result, axis=2)
-print(np.amax(result))
-outRGB = cv2.cvtColor(255*predicted_class.astype(np.uint8),cv2.COLOR_GRAY2BGR)
-        
-cv2.imwrite('2015/test/test.png',outRGB)
-
-
-# In[3]:
-'''
 X = []
 y = []
 #np.random.seed(42)
@@ -114,7 +86,7 @@ y = to_categorical(y,2)
 print('Train set size : ', X_train.shape[0])
 print('Test set size : ', X_test.shape[0])
 
-# In[8]:
+
 
 
 
@@ -150,6 +122,6 @@ print('Number of false positives: ', fpos)
 print('Number of false negatives: ', fneg)
 print('Number of true negatives: ', tneg)
 print(accuracy * 100)
-'''
+
 
 
