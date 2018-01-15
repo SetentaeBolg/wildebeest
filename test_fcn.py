@@ -20,11 +20,12 @@ fcnmodel.load_weights('fcn_cifar10_weights_from_classifier.h5')
 # test FCN on section of survey image
 X = []
 filename = "2015/SWC1717.JPG"
+# filename = '2015/test/test_in.png'
 img = Image.open(filename)
 arr = np.array(img)
 arr = arr[500:ny+500,1000:nx+1000,:]
-X.append(arr.transpose(1,0,2))
-img = Image.fromarray(X[0].transpose(1,0,2))
+X.append(arr)
+img = Image.fromarray(X[0])
 img.save('2015/test/input.png')
 
 X = np.asarray(X)
