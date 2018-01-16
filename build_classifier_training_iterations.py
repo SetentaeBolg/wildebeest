@@ -38,7 +38,7 @@ for i in range(df.size):
 			for y_in in range(0, ny, 32):
 				for x_in in range(0, nx, 32):
 					flag = False
-					if np.max(arr[y_in:y_in+32,x_in:x_in+32]) > 0.95:
+					if np.max(predicted_class[y_in:y_in+32,x_in:x_in+32]) > 0.95:
 						x_t, y_t = x_pos + x_in + 15, y_pos + y_in + 15
 						for d in df3:
 							if math.sqrt((d.xcoord - x_t) ** 2 + (d.ycoord - y_t) ** 2) <= 130:
