@@ -3,6 +3,7 @@ from keras.layers import Activation, Reshape, Dropout
 from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, Flatten, Dense
 from keras.models import Sequential, Model
 from keras.layers import *
+from keras.applications.vgg16 import VGG16
 
 
 num_classes=2
@@ -61,3 +62,18 @@ def getSegModel(input_width, input_height) -> Model:
     model = Model(input_img, x)
     return model
 
+def getVgg16SegModel(input_width, input_height) -> Sequential:
+    input_shape = (input_height,input_width,3)
+    input_img = Input(shape=input_shape)
+
+    base_model = VGG16(weights = 'imagenet', include_top = False, input_shape=input_shape)
+    model=Sequential()
+    for layer in base_model.layers:
+        model.add(layer)
+    model.add(Conv2D(256, (2,2), activation='relu', name='fc1',input_shape=base_model.output_shape[1:]))
+    model.add(Dropout(0.5))
+    model.add(Conv2D(num_classes, (1, 1), activation='sigmoid', name='predictions'))
+    model.add(BilinearUpSampling2D(target_size=(input_height,input_width)))
+    for layer in model.layers[:-4]:
+        layer.trainable = False
+    return model
